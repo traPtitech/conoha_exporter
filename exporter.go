@@ -94,7 +94,7 @@ func (cc *ConohaCollector) AutoUpdate() {
 			metrics = append(metrics, prometheus.MustNewConstMetric(cc.describes[7], prometheus.GaugeValue, float64(quota.TotalUsage), serviceID))
 		}
 
-		deposit, err := cc.BudgetInfo()
+		deposit, err := cc.BillingPaymentSummary()
 		if err != nil {
 			log.Fatal(err)
 		}
