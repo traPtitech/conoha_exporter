@@ -19,6 +19,7 @@ type ConohaClient struct {
 	accountEndpoint         string
 	objectStorageEndpoint   string
 	databaseHostingEndpoint string
+	billingEndpoint         string
 }
 
 // JSON 受け取り用
@@ -320,4 +321,26 @@ func (cc *ConohaClient) DatabaseInfo(databaseID string) (*Database, error) {
 	}
 
 	return &uResp.Database, nil
+}
+
+//JSON受取用
+type BudgetInfoResponce struct {
+	PaymentSummary PaymentSummary `json:"payment_summary"`
+}
+
+type PaymentSummary struct {
+	Deposit int `json:"total_deposit_amount"`
+}
+
+//入金サマリーの取得
+func (cc *ConohaClient) BudgetInfo() (*PaymentSummary, error) {
+	resp, _, err := cc.get(cc.accountEndpoint + "/payment-summary")
+	if err != nil {
+		return nil, err
+	}
+	var uResp BudgetInfoResponce
+	if err := json.Unmarshal(resp, &uResp); err != nil {
+		return nil, err
+	}
+	return &uResp.PaymentSummary, nil
 }
