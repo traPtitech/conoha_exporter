@@ -99,6 +99,7 @@ func (cc *ConohaCollector) AutoUpdate() {
 			log.Fatal(err)
 		}
 		metrics = append(metrics, prometheus.MustNewConstMetric(cc.describes[8], prometheus.GaugeValue, float64(deposit.Deposit)))
+
 		// メトリクスデータ更新
 		cc.Lock()
 		cc.metrics = metrics
