@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -110,6 +111,10 @@ func tokenRequester(region string, tenantId string, username string, password st
 		respBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
+		}
+
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf("non-200 response (%d). body: %s.", resp.StatusCode, respBytes)
 		}
 
 		// JSONを読む
@@ -335,7 +340,7 @@ func (cc *ConohaClient) DatabaseInfo(databaseID string) (*Database, error) {
 	return &uResp.Database, nil
 }
 
-//JSON受取用
+// JSON受取用
 type BillingPaymentSummaryResponce struct {
 	PaymentSummary PaymentSummary `json:"payment_summary"`
 }
@@ -344,7 +349,7 @@ type PaymentSummary struct {
 	Deposit int `json:"total_deposit_amount"`
 }
 
-//入金サマリーの取得
+// 入金サマリーの取得
 func (cc *ConohaClient) BillingPaymentSummary() (*PaymentSummary, error) {
 	resp, _, err := cc.get(cc.accountEndpoint + "/payment-summary")
 	if err != nil {
